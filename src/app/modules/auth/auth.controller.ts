@@ -6,6 +6,8 @@ import { setAuthCookie } from "../../utils/setAuthCookie";
 import { sendResponse } from "../../utils/sendResponse";
 import AppError from "../../errorHelpers/AppError";
 import { JwtPayload } from "jsonwebtoken";
+import { createUserTokens } from "../../utils/userTokens";
+import { envVars } from "../../config/env";
 
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const loginInfo = await AuthServices.credentialsLogin(req.body);
@@ -82,10 +84,62 @@ const changePassword = catchAsync(async (req: Request, res: Response, next: Next
     })
 })
 
+const setPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+
+    const { password } = req.body;
+
+    await AuthServices.setPassword(password, decodedToken);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: "Password setted successfully",
+        data: null
+    })
+})
+
+const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+
+    await AuthServices.resetPassword(req.body, decodedToken as JwtPayload);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: "Password changed successfully",
+        data: null
+    })
+})
+
+
+const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    let redirectTo = req.query.state ? req.query.state as string : ""
+
+    if (redirectTo.startsWith("/")) {
+        redirectTo = redirectTo.slice(1)
+    }
+
+    const user = req.user;
+
+    if (!user) {
+        throw new AppError(400, "User not found")
+    }
+
+    const tokenInfo = createUserTokens(user)
+    setAuthCookie(res, tokenInfo)
+
+    res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
+})
+
 
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
     logout,
-    changePassword
+    changePassword,
+    setPassword,
+    resetPassword,
+    googleCallbackController
 }
