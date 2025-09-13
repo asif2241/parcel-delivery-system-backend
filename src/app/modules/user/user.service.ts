@@ -1,8 +1,9 @@
 import AppError from "../../errorHelpers/AppError";
 import bcryptjs from "bcryptjs"
-import { IAuthProvider, IUser } from "./user.interface";
+import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 const createUser = async (payload: Partial<IUser>) => {
     const { email, password, ...rest } = payload;
@@ -48,13 +49,42 @@ const getSingleUser = async (id: string) => {
     }
 }
 
-const updateUser = async (userId: string, payload: Partial<IUser>) => {
-    const ifUserExist = await User.findById(userId);
-    if (!ifUserExist) {
+const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken: JwtPayload) => {
+
+    if (decodedToken.role === Role.SENDER || decodedToken.role === Role.RECEIVER) {
+        if (userId !== decodedToken.userId) {
+            throw new AppError(401, "You are not authorized!")
+        }
+    }
+
+    const isUserExists = await User.findById(userId);
+    if (!isUserExists) {
         throw new AppError(404, "User not found")
     }
 
-    const newUpdatedUser = await User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true })
+    if (decodedToken.role === Role.ADMIN && isUserExists.role === Role.SUPER_ADMIN) {
+        throw new AppError(401, "You are not authorized")
+    }
+
+    if (payload.role) {
+        if (decodedToken.role === Role.RECEIVER || decodedToken.role === Role.SENDER) {
+            throw new AppError(401, "you are not authorized!")
+        }
+
+        if (payload.role === Role.SUPER_ADMIN && decodedToken.role === Role.ADMIN) {
+            throw new AppError(401, "You are not authorized!")
+        }
+    }
+
+    if (payload.isActive || payload.isDeleted || payload.isVerified) {
+        if (decodedToken.role === Role.SENDER || decodedToken.role === Role.RECEIVER) {
+            throw new AppError(401, "You are not authorized!")
+        }
+    }
+
+    const newUpdatedUser = await User.findByIdAndUpdate(userId, payload, {
+        new: true, runValidators: true
+    })
 
     return newUpdatedUser
 }
