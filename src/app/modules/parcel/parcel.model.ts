@@ -1,6 +1,6 @@
 
 import { model, Schema } from "mongoose";
-import { IParcel, IStatusLog, PARCEL_STATUS } from "./parcel.interface";
+import { IParcel, IStatusLog, PARCEL_STATUS, PARCEL_TYPE } from "./parcel.interface";
 
 //subdocument for status log
 const statusLogSchema = new Schema<IStatusLog>({
@@ -9,7 +9,7 @@ const statusLogSchema = new Schema<IStatusLog>({
         enum: Object.values(PARCEL_STATUS),
         default: PARCEL_STATUS.REQUESTED
     },
-    updatedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     location: { type: String },
     notes: { type: String }
 }, {
@@ -27,7 +27,11 @@ const parcelSchema = new Schema<IParcel>({
         phone: { type: String, required: true },
         address: { type: String, required: true }
     },
-    parcelType: { type: String, required: true },
+    parcelType: {
+        type: String,
+        enum: Object.values(PARCEL_TYPE),
+        required: true
+    },
     parcelImg: { type: [String], default: [] },
     weight: { type: Number, required: true },
     fee: { type: Number, required: true },
@@ -36,7 +40,10 @@ const parcelSchema = new Schema<IParcel>({
         enum: Object.values(PARCEL_STATUS),
         default: PARCEL_STATUS.REQUESTED
     },
-    statusHistory: [statusLogSchema]
+    statusHistory: {
+        type: [statusLogSchema],
+
+    }
 }, {
     timestamps: true,
     versionKey: false

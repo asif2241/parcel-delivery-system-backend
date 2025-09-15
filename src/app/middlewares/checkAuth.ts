@@ -22,8 +22,12 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
             throw new AppError(400, "User does not exist")
         }
 
-        if (isUserExists.isActive === isActive.BLOCKED || isUserExists.isActive === isActive.INACTIVE) {
+        if (isUserExists.isActive === isActive.INACTIVE) {
             throw new AppError(400, `User is ${isUserExists.isActive}`)
+        }
+
+        if (isUserExists.isBlocked) {
+            throw new AppError(400, "User is Blocked!")
         }
 
         if (isUserExists.isDeleted) {
@@ -34,7 +38,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         if (!authRoles.includes(verifiedToken.role)) {
             throw new AppError(403, "You are not permitted to view this route!!!")
         }
-        console.log(verifiedToken);
+        // console.log(verifiedToken);
         req.user = verifiedToken
         next()
 

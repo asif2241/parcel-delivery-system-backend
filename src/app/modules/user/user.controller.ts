@@ -55,9 +55,38 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     })
 })
 
+const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const decodedToken = req.user;
+
+    const result = await UserServices.blockUser(id, decodedToken as JwtPayload);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "User Blocked Successfully",
+        data: result
+    })
+})
+
+const unBlockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+
+    const result = await UserServices.unBlockUser(id);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "User Unblocked Successfully",
+        data: result
+    })
+})
+
 export const UserController = {
     createUser,
     getAllUsers,
     getSingleUser,
-    updateUser
+    updateUser,
+    blockUser,
+    unBlockUser
 }
