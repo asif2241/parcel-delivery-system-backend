@@ -1,5 +1,5 @@
 import cookieParser from "cookie-parser"
-import express, { Request, Response } from "express"
+import express, { Request, Response, urlencoded } from "express"
 import expressSession from "express-session"
 import passport from "passport"
 import cors from "cors"
@@ -21,6 +21,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(cookieParser())
 app.use(express.json())
+app.use(urlencoded({ extended: true }))
 app.use(cors())
 
 

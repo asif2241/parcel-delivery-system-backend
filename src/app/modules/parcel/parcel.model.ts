@@ -32,9 +32,9 @@ const parcelSchema = new Schema<IParcel>({
         enum: Object.values(PARCEL_TYPE),
         required: true
     },
-    parcelImg: { type: [String], default: [] },
     weight: { type: Number, required: true },
     fee: { type: Number, required: true },
+    image: { type: String, required: true },
     currentStatus: {
         type: String,
         enum: Object.values(PARCEL_STATUS),

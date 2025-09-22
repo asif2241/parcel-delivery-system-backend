@@ -4,9 +4,12 @@ import { catchAsync } from "../../utils/catchAsync";
 import { ParcelServices } from "./parcel.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { JwtPayload } from "jsonwebtoken";
+import { IParcel } from "./parcel.interface";
 
 const createParcel = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const payload = req.body;
+    console.log(req.file);
+
+    const payload = { ...req.body, image: req.file?.path };
     const decodedToken = req.user;
 
     const result = await ParcelServices.createParcel(payload, decodedToken as JwtPayload);

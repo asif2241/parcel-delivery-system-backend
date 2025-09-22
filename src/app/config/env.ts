@@ -17,12 +17,16 @@ interface EnvConfig {
     EXPRESS_SESSION_SECRET: string,
     FRONTEND_URL: string,
     SUPER_ADMIN_EMAIL: string,
-    SUPER_ADMIN_PASSWORD: string
+    SUPER_ADMIN_PASSWORD: string,
+    CLOUDINARY_CLOUD_NAME: string,
+    CLOUDINARY_API_KEY: string,
+    CLOUDINARY_API_SECRET: string
+
 
 }
 
 const loadEnvVariables = (): EnvConfig => {
-    const requiredVariables: string[] = ["PORT", "DB_URL", "NODE_ENV", "JWT_ACCESS_SECRET", "JWT_ACCESS_EXPIRES", "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRES", "BCRYPT_SALT_ROUND", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL", "EXPRESS_SESSION_SECRET", "FRONTEND_URL", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD"]
+    const requiredVariables: string[] = ["PORT", "DB_URL", "NODE_ENV", "JWT_ACCESS_SECRET", "JWT_ACCESS_EXPIRES", "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRES", "BCRYPT_SALT_ROUND", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL", "EXPRESS_SESSION_SECRET", "FRONTEND_URL", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"]
 
     requiredVariables.forEach(key => {
         if (!process.env[key]) {
@@ -45,7 +49,10 @@ const loadEnvVariables = (): EnvConfig => {
         EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET as string,
         FRONTEND_URL: process.env.FRONTEND_URL as string,
         SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
-        SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string
+        SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
+        CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
+        CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
+        CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string
     }
 }
 

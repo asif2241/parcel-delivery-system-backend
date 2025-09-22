@@ -12,6 +12,8 @@ import AppError from "../../errorHelpers/AppError";
 
 const createParcel = async (payload: IParcel, decodedToken: JwtPayload) => {
 
+    // throw new AppError(222, "fake error")
+
     const newParcelData = {
         ...payload,
         trackingId: generateTrackingId(),

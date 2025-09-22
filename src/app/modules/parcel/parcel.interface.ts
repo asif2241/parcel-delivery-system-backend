@@ -44,9 +44,9 @@ export interface IParcel {
         address: string
     },
     parcelType: PARCEL_TYPE,
-    parcelImg?: string[],
     weight: number,
     fee: number,
+    image: string,
     currentStatus: PARCEL_STATUS
     statusHistory: IStatusLog[];
 }
