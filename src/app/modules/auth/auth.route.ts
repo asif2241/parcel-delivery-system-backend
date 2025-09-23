@@ -12,6 +12,8 @@ AuthRoutes.post("/refresh-token", AuthControllers.getNewAccessToken);
 AuthRoutes.post("/logout", AuthControllers.logout);
 AuthRoutes.post("/change-password", checkAuth(...Object.values(Role)), AuthControllers.changePassword);
 AuthRoutes.post("/set-password", checkAuth(...Object.values(Role)), AuthControllers.setPassword)
+AuthRoutes.post("/forgot-password", AuthControllers.forgotPassword)
+AuthRoutes.post("/reset-password", checkAuth(...Object.values(Role)), AuthControllers.resetPassword)
 
 
 AuthRoutes.get("/google", async (req: Request, res: Response, next: NextFunction) => {

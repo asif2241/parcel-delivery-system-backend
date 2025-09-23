@@ -20,13 +20,20 @@ interface EnvConfig {
     SUPER_ADMIN_PASSWORD: string,
     CLOUDINARY_CLOUD_NAME: string,
     CLOUDINARY_API_KEY: string,
-    CLOUDINARY_API_SECRET: string
+    CLOUDINARY_API_SECRET: string,
+    EMAIL_SENDER: {
+        SMTP_HOST: string,
+        SMTP_PASS: string,
+        SMTP_PORT: string,
+        SMTP_USER: string,
+        SMTP_FROM: string
+    }
 
 
 }
 
 const loadEnvVariables = (): EnvConfig => {
-    const requiredVariables: string[] = ["PORT", "DB_URL", "NODE_ENV", "JWT_ACCESS_SECRET", "JWT_ACCESS_EXPIRES", "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRES", "BCRYPT_SALT_ROUND", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL", "EXPRESS_SESSION_SECRET", "FRONTEND_URL", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"]
+    const requiredVariables: string[] = ["PORT", "DB_URL", "NODE_ENV", "JWT_ACCESS_SECRET", "JWT_ACCESS_EXPIRES", "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRES", "BCRYPT_SALT_ROUND", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL", "EXPRESS_SESSION_SECRET", "FRONTEND_URL", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", "SMTP_HOST", "SMTP_PASS", "SMTP_PORT", "SMTP_USER", "SMTP_FROM"]
 
     requiredVariables.forEach(key => {
         if (!process.env[key]) {
@@ -52,7 +59,14 @@ const loadEnvVariables = (): EnvConfig => {
         SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
         CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
         CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
-        CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string
+        CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+        EMAIL_SENDER: {
+            SMTP_HOST: process.env.SMTP_HOST as string,
+            SMTP_PASS: process.env.SMTP_PASS as string,
+            SMTP_PORT: process.env.SMTP_PORTE as string,
+            SMTP_USER: process.env.SMTP_USER as string,
+            SMTP_FROM: process.env.SMTP_FROM as string
+        }
     }
 }
 
