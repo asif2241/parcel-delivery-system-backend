@@ -6,19 +6,19 @@
 
 ## Core Features
 
-- **🔐 Secure Authentication**: Implements a JWT (JSON Web Token) based system for secure user login and session management, with password hashing using bcrypt.
+- **🔐 Secure Authentication:** Implements a **JWT** _(JSON Web Token)_ based system for secure user login and session management, with password hashing using bcrypt.
 
-- **🎭 Role-Based Access Control (RBAC)**: Features three distinct user roles— ==Admin==, ==Sender==, and ==Receiver== —each with a specific set of permissions to ensure data integrity and security.
+- **🎭 Role-Based Access Control (RBAC):** Features three distinct user roles— **Admin**, **Sender**, and **Receiver** —each with a specific set of permissions to ensure data integrity and security.
 
-- **📦 Complete Parcel Lifecycle Management:**: Senders can create, manage, cancel, and Receivers can receive parcels. The system handles all status transitions logically.
+- **📦 Complete Parcel Lifecycle Management:** _Senders_ can create, manage, cancel, and Receivers can receive parcels. The system handles all status transitions logically.
 
-- **🔍 Real-Time Tracking System:**: Every parcel is assigned a unique, trackable ID. The embedded status history allows users to monitor the parcel's journey from origin to destination
+- **🔍 Real-Time Tracking System:** Every parcel is assigned a unique, trackable ID. The embedded status history allows users to monitor the parcel's journey from origin to destination
 
 - **⚙️ Admin Oversight:**: A powerful Admin role with the ability to view and manage all users and parcels, update delivery statuses, and ensure the smooth operation of the system.
 
 ---
 
-## ⚙️ Technologies Used:
+## ⚙️ **Technologies Used:**
 
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB, Mongoose
@@ -27,13 +27,13 @@
 - **Authentication**: JWT, Role-based auth
 - **File Upload**: Multer + Cloudinary
 - **Password Hashing**: Bcyptjs
-- **Others**: TypeScript, Dotenv, ESLint, Postman
+- **Others**: TypeScript, Dotenv, ESLint, Postman, Cors, Cookie-parser
 
 ---
 
-## API DETAILS:
+## **API DETAILS**:
 
-### 🔐 Authentication
+### 🔐 **Authentication Related API**
 
 | **Method** | **Endpoints**         | **Description**                                    | **Access**            |
 | ---------- | --------------------- | -------------------------------------------------- | --------------------- |
@@ -47,7 +47,7 @@
 
 ---
 
-### 🔐 OTP
+### 🔐 **OTP Related API**
 
 | **Method** | **Endpoints**    | **Description** | **Access** |
 | ---------- | ---------------- | --------------- | ---------- |
@@ -56,7 +56,7 @@
 
 ---
 
-### 🔐 PARCELS
+### 🚚 **PARCEL Related API**
 
 | **Method** | **Endpoints**                   | **Description**                                                                                                                                                                                                                       | **Access**              |
 | ---------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
@@ -69,7 +69,7 @@
 
 ---
 
-### 🔐 USER RELATED API:
+### 👮 **USER RELATED API:**
 
 | **Method** | **Endpoints**   | **Description**               | **Access**                           |
 | ---------- | --------------- | ----------------------------- | ------------------------------------ |
