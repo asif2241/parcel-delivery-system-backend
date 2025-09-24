@@ -55,26 +55,65 @@ import { PARCEL_STATUS, PARCEL_TYPE } from "./parcel.interface"
 // }
 
 const statusLogZodSchema = z.object({
-    status: z.string(),
+    status: z.nativeEnum(PARCEL_STATUS, {
+        invalid_type_error: "Invalid Status"
+    })
+        .optional(),
     updatedBy: z.string().optional(),
-    location: z.string().optional(),
-    notes: z.string().optional()
+    location: z.string({
+        invalid_type_error: "Location must be String"
+    })
+        .min(2, { message: "Location must be at least 2 characters long" })
+        .max(50, { message: "Location cannot exceed 50 characters" })
+        .optional(),
+    notes: z.string({
+        invalid_type_error: "Notes must be String"
+    })
+        .min(5, { message: "Notes must be at least 2 characters long" })
+        .max(50, { message: "Notes cannot exceed 50 characters" })
+        .optional()
 })
 
 export const createParcelZodSchema = z.object({
     trackingId: z.string().optional(),
     sender: z.string().optional(),
     receiver: z.object({
-        name: z.string(),
-        email: z.string(),
-        phone: z.string(),
+        name: z.string({
+            required_error: "Receiver name required!",
+            invalid_type_error: "Receiver name not in string format!"
+        })
+            .min(3, { message: "Receiver name must be at least 3 characters long!" })
+            .max(20, { message: "Receiver name cannot exceed 20 characters!" }),
+        email: z
+            .string({
+                required_error: "Receivers email required!",
+                invalid_type_error: "Email must be String!"
+            })
+            .email({ message: "Invalid Email Format!" }),
+        phone: z
+            .string({
+                required_error: "Receivers phone number required!",
+                invalid_type_error: "Phone number must be string!"
+            })
+            .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
+                message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
+            }),
         address: z.string()
     }),
-    parcelType: z.enum(Object.values(PARCEL_TYPE) as string[]),
-    weight: z.number(),
-    fee: z.number().optional(),
-    image: z.string().optional(),
-    currentStatus: z.enum(Object.values(PARCEL_STATUS) as string[]).optional(),
+    parcelType: z.nativeEnum(PARCEL_TYPE, {
+        invalid_type_error: "Invalid Parcel Type!"
+    }),
+    weight: z.number({
+        required_error: "Weight is required",
+        invalid_type_error: "Weight must be in Number"
+    }),
+    fee: z.number({
+        invalid_type_error: "Fee must be in Number"
+    }).optional(),
+    image: z.string({}).optional(),
+    currentStatus: z.nativeEnum(PARCEL_STATUS, {
+        invalid_type_error: "Invalid Status"
+    }).optional(),
     statusHistory: statusLogZodSchema.optional()
 })
 

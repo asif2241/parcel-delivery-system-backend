@@ -55,6 +55,19 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     })
 })
 
+
+const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+
+    const result = await UserServices.getMe(decodedToken as JwtPayload)
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: "User Retrieve Successfully",
+        data: result.data
+    })
+})
+
 const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     const decodedToken = req.user;
@@ -88,5 +101,6 @@ export const UserController = {
     getSingleUser,
     updateUser,
     blockUser,
-    unBlockUser
+    unBlockUser,
+    getMe
 }

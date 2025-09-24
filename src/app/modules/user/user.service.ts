@@ -91,6 +91,13 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
 }
 
 
+const getMe = async (decodedToken: JwtPayload) => {
+    const user = await User.findById(decodedToken.userId).select("-password");
+    return {
+        data: user
+    }
+}
+
 const blockUser = async (id: string, decodedToken: JwtPayload) => {
     const user = await User.findById(id).select("-password");
 
@@ -142,5 +149,6 @@ export const UserServices = {
     getSingleUser,
     updateUser,
     blockUser,
-    unBlockUser
+    unBlockUser,
+    getMe
 }
