@@ -30,12 +30,16 @@ export const createNewAccessTokenWithRefreshToken = async (refreshToken: string)
     if (!isUserExists) {
         throw new AppError(400, "User does not exists")
     }
-    if (isUserExists.isActive === isActive.BLOCKED || isUserExists.isActive === isActive.INACTIVE) {
+    if (isUserExists.isActive === isActive.INACTIVE) {
         throw new AppError(400, `User is ${isUserExists.isActive}`)
     }
 
     if (isUserExists.isDeleted) {
         throw new AppError(400, "User is deleted")
+    }
+
+    if (isUserExists.isBlocked) {
+        throw new AppError(400, "User is Blocked")
     }
 
     const jwtPayload = {
