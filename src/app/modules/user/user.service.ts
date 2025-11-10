@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from "../../errorHelpers/AppError";
 import bcryptjs from "bcryptjs"
 import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import { userSortField } from "./user.constant";
 
 const createUser = async (payload: Partial<IUser>) => {
     const { email, password, ...rest } = payload;
@@ -29,15 +31,51 @@ const createUser = async (payload: Partial<IUser>) => {
 }
 
 //get all user
-const getAllUsers = async () => {
-    const users = await User.find({}).select("-password");
-    const totalUsers = await User.countDocuments();
+const getAllUsers = async (query: Record<string, string>) => {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const userRole = query.role;
+    const searchEmail = query.searchEmail;
+
+    const userInputSort = query.sort || "-createdAt";
+    const sortField = userInputSort.startsWith('-') ? userInputSort.substring(1) : userInputSort;
+    let sort = "-createdAt";
+    if (userSortField.includes(sortField)) {
+        sort = userInputSort;
+    }
+
+    const filter: Record<string, any> = {};
+
+    if (userRole) {
+        filter.role = userRole
+    }
+    if (searchEmail) {
+        filter.email = searchEmail
+    }
+
+
+    const users = await User.find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .select("-password");
+
+    const totalUsers = await User.countDocuments(filter);
+    const totalPage = Math.ceil(totalUsers / limit)
+
+
+    const meta = {
+        page,
+        limit,
+        totalPage,
+        total: totalUsers
+    }
 
     return {
         data: users,
-        meta: {
-            total: totalUsers
-        }
+        meta: meta
     }
 
 }

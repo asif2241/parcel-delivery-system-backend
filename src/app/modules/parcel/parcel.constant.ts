@@ -1,6 +1,6 @@
 import { PARCEL_STATUS } from "./parcel.interface";
 
-export const allowedSortFields = ['createdAt', 'weight', 'fee']
+export const allowedParcelSortFields = ['createdAt', 'weight', 'fee']
 
 export const nonCancellableStatuses = [
     PARCEL_STATUS.DISPATCHED,

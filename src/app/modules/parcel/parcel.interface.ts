@@ -36,7 +36,8 @@ export enum PARCEL_TYPE {
 
 export interface IParcel {
     trackingId: string,
-    sender: Types.ObjectId,
+    senderId: Types.ObjectId,
+    sender_email: string,
     receiver: {
         name: string,
         email: string,
@@ -49,4 +50,7 @@ export interface IParcel {
     image: string,
     currentStatus: PARCEL_STATUS
     statusHistory: IStatusLog[];
+    createdAt?: Date;
+    updatedAt?: Date;
+
 }

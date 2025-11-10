@@ -20,7 +20,8 @@ const statusLogSchema = new Schema<IStatusLog>({
 
 const parcelSchema = new Schema<IParcel>({
     trackingId: { type: String, required: true, unique: true },
-    sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    sender_email: { type: String },
     receiver: {
         name: { type: String, required: true },
         email: { type: String, required: true },

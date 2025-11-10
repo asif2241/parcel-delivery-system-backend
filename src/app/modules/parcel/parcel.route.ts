@@ -22,3 +22,5 @@ ParcelRoutes.patch("/cancel/:id", checkAuth(Role.SENDER), ParcelControllers.canc
 ParcelRoutes.get("/track/:trackingId", ParcelControllers.trackParcel)
 
 ParcelRoutes.patch("/update-status/:parcelId", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), ParcelControllers.updateParcelStatus)
+
+ParcelRoutes.get("/dashboard/analytics", checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.SENDER), ParcelControllers.parcelAnalytics)

@@ -79,11 +79,25 @@ const updateParcelStatus = catchAsync(async (req: Request, res: Response, next: 
     const payload = req.body;
     const decodedToken = req.user;
 
+    // console.log(parcelId, parcelId);
+
     const result = await ParcelServices.updateParcelStatus(decodedToken as JwtPayload, parcelId, payload)
     sendResponse(res, {
         statusCode: 200,
         success: true,
         message: "Parcel status updated successfully",
+        data: result
+    })
+})
+
+const parcelAnalytics = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+
+    const result = await ParcelServices.parcelAnalytics(decodedToken as JwtPayload)
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Parcel Analytics Retrived Successfully",
         data: result
     })
 })
@@ -94,7 +108,8 @@ export const ParcelControllers = {
     getSingleParcelById,
     cancelParcel,
     trackParcel,
-    updateParcelStatus
+    updateParcelStatus,
+    parcelAnalytics
 }
 
 

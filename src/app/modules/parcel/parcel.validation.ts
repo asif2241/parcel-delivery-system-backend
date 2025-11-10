@@ -76,7 +76,8 @@ const statusLogZodSchema = z.object({
 
 export const createParcelZodSchema = z.object({
     trackingId: z.string().optional(),
-    sender: z.string().optional(),
+    senderId: z.string().optional(),
+    sender_email: z.string().optional(),
     receiver: z.object({
         name: z.string({
             required_error: "Receiver name required!",

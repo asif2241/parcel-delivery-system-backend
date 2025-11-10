@@ -18,7 +18,9 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 
 //get all user
 const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await UserServices.getAllUsers();
+    const query = req.query;
+
+    const result = await UserServices.getAllUsers(query as Record<string, string>);
     sendResponse(res, {
         success: true,
         statusCode: 200,
@@ -70,6 +72,7 @@ const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction)
 
 const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
+    console.log(id);
     const decodedToken = req.user;
 
     const result = await UserServices.blockUser(id, decodedToken as JwtPayload);
@@ -84,7 +87,7 @@ const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunct
 
 const unBlockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
-
+    console.log(id);
     const result = await UserServices.unBlockUser(id);
 
     sendResponse(res, {

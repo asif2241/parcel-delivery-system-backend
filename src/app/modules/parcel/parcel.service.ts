@@ -6,7 +6,7 @@ import { generateTrackingId } from "../../utils/generateTrackingId";
 import { calculateParcelFee } from "../../utils/calculateFee";
 import { Parcel } from "./parcel.model";
 import { Role } from "../user/user.interface";
-import { allowedSortFields, nonCancellableStatuses } from "./parcel.constant";
+import { allowedParcelSortFields, nonCancellableStatuses } from "./parcel.constant";
 import AppError from "../../errorHelpers/AppError";
 
 
@@ -18,7 +18,8 @@ const createParcel = async (payload: IParcel, decodedToken: JwtPayload) => {
         ...payload,
         trackingId: generateTrackingId(),
         fee: calculateParcelFee(payload.weight),
-        sender: decodedToken.userId,
+        senderId: decodedToken.userId,
+        sender_email: decodedToken.email,
         currentStatus: PARCEL_STATUS.REQUESTED,
         statusHistory: [{
             status: PARCEL_STATUS.REQUESTED,
@@ -38,12 +39,13 @@ const getAllParcel = async (decodedToken: JwtPayload, query: Record<string, stri
     const skip = (page - 1) * limit;
     const currentStatus = query.currentStatus;
     const parcelType = query.parcelType;
+    const searchEmail = query.searchEmail;
 
     //safer sorting logic
     const userInputSort = query.sort || "-createdAt";
     const sortField = userInputSort.startsWith('-') ? userInputSort.substring(1) : userInputSort;
     let sort = "-createdAt";
-    if (allowedSortFields.includes(sortField)) {
+    if (allowedParcelSortFields.includes(sortField)) {
         sort = userInputSort;
     }
 
@@ -51,11 +53,18 @@ const getAllParcel = async (decodedToken: JwtPayload, query: Record<string, stri
     const filter: Record<string, any> = {};
 
     if (decodedToken.role === Role.SENDER) {
-        filter.sender = decodedToken.userId;
+        filter.senderId = decodedToken.userId;
     } else if (decodedToken.role === Role.RECEIVER) {
         filter["receiver.email"] = decodedToken.email;
     } else if (decodedToken.role === Role.SUPER_ADMIN || decodedToken.role === Role.ADMIN) {
         // admin and super admin can view all the parcels,
+        // ✅ If admin searched by email
+        if (searchEmail) {
+            filter.$or = [
+                { sender_email: { $regex: searchEmail, $options: "i" } },
+                { "receiver.email": { $regex: searchEmail, $options: "i" } },
+            ];
+        }
     }
 
     if (currentStatus) {
@@ -90,6 +99,8 @@ const getAllParcel = async (decodedToken: JwtPayload, query: Record<string, stri
     }
 }
 
+
+
 const getSingleParcelById = async (id: string) => {
     const parcel = await Parcel.findById(id);
     return parcel
@@ -99,7 +110,7 @@ const cancelParcel = async (decodedToken: JwtPayload, id: string) => {
 
     const parcel = await Parcel.findById(id);
 
-    if (decodedToken.userId !== parcel?.sender.toString()) {
+    if (decodedToken.userId !== parcel?.senderId.toString()) {
         throw new AppError(401, "Sorry, you are not authorized to cancel this percel")
     }
     if (nonCancellableStatuses.includes(parcel!.currentStatus)) {
@@ -129,6 +140,7 @@ const trackParcel = async (trackingId: string) => {
 
 const updateParcelStatus = async (decodedToken: JwtPayload, parcelId: string, payload: Partial<IStatusLog>) => {
     // console.log(payload);
+    console.log(parcelId, payload);
     const parcel = await Parcel.findById(parcelId);
 
     if (!parcel) {
@@ -165,9 +177,81 @@ const updateParcelStatus = async (decodedToken: JwtPayload, parcelId: string, pa
                 statusHistory: updatedStatusHistory
             }
         }, { new: true, runValidators: true })
-    console.log(updatedParcel);
+    // console.log(updatedParcel);
     return updatedParcel
 
+}
+
+const parcelAnalytics = async (decodedToken: JwtPayload) => {
+    const filter: Record<string, any> = {};
+
+    //  Role-based filtering
+    if (decodedToken.role === Role.SENDER) {
+        filter.senderId = decodedToken.userId;
+    } else if (decodedToken.role === Role.RECEIVER) {
+        filter["receiver.email"] = decodedToken.email;
+    }
+
+    const parcels = await Parcel.find(filter)
+    const total = parcels.length;
+
+    // define transit-related statuses
+    const inTransitStatuses = [
+        "IN_TRANSIT",
+        "OUT_FOR_DELIVERY",
+        "PICKED",
+        "DISPATCHED",
+    ];
+
+    // ✅ Count by status
+    const delivered = parcels.filter(p => p.currentStatus === PARCEL_STATUS.DELIVERED).length;
+    const cancelled = parcels.filter(p => p.currentStatus === PARCEL_STATUS.CANCELLED).length;
+    const inTransit = parcels.filter(p => inTransitStatuses.includes(p.currentStatus)).length;
+    const pending = parcels.filter(p => p.currentStatus === PARCEL_STATUS.REQUESTED || p.currentStatus === PARCEL_STATUS.APPROVED).length;
+    const returned = parcels.filter(p => p.currentStatus === PARCEL_STATUS.RETURNED).length;
+    const rescheduled = parcels.filter(p => p.currentStatus === PARCEL_STATUS.RESCHEDULE).length;
+
+    // ✅ Status distribution
+    // const statusDistributionMap: Record<string, number> = {};
+    // parcels.forEach(p => {
+    //     statusDistributionMap[p.currentStatus] =
+    //         (statusDistributionMap[p.currentStatus] || 0) + 1;
+    // });
+    // const statusDistribution = Object.entries(statusDistributionMap).map(
+    //     ([status, count]) => ({ status, count })
+    // );
+
+    // ✅ Monthly counts (last 6 months)
+    const now = new Date();
+    const monthly: { month: string; count: number }[] = [];
+
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthName = date.toLocaleString("en-US", { month: "short" });
+        const year = date.getFullYear();
+
+        const monthCount = parcels.filter(p => {
+            const createdAt = new Date(p.createdAt ?? new Date());
+            return (
+                createdAt.getMonth() === date.getMonth() &&
+                createdAt.getFullYear() === date.getFullYear()
+            );
+        }).length;
+
+        monthly.push({ month: `${monthName} ${year}`, count: monthCount });
+    }
+
+    return {
+        total,
+        delivered,
+        inTransit,
+        cancelled,
+        pending,
+        returned,
+        rescheduled,
+        monthly,
+        // statusDistribution,
+    }
 }
 
 export const ParcelServices = {
@@ -176,7 +260,8 @@ export const ParcelServices = {
     getSingleParcelById,
     cancelParcel,
     trackParcel,
-    updateParcelStatus
+    updateParcelStatus,
+    parcelAnalytics
 }
 
 // asif@mail.com asif@mail2.com john@example.com john@example5.com
