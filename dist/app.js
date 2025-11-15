@@ -59,7 +59,8 @@ app.use(express_1.default.json());
 app.set("trust proxy", 1);
 app.use((0, express_1.urlencoded)({ extended: true }));
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000", "https://b5-a5-parcel-delivery-system.vercel.app"],
+    origin: ["http://localhost:3000", "https://parcel-delivery-client-b5a6.vercel.app"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true
 }));
 app.use("/api/v1", routes_1.router);
