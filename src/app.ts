@@ -24,7 +24,7 @@ app.use(express.json())
 app.set("trust proxy", 1);
 app.use(urlencoded({ extended: true }))
 app.use(cors({
-    origin: ["http://localhost:3000", "https://b5-a5-parcel-delivery-system.vercel.app"],
+    origin: ["http://localhost:3000", "https://parcel-delivery-client-b5a6.vercel.app"],
     credentials: true
 }))
 

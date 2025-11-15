@@ -32,7 +32,6 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    // await connectRedis()
     yield startServer();
     yield (0, seedSuperAdmin_1.seedSuperAdmin)();
 }))();
