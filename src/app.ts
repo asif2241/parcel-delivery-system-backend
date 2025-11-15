@@ -21,10 +21,11 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(cookieParser())
 app.use(express.json())
+app.set("trust proxy", 1);
 app.use(urlencoded({ extended: true }))
 app.use(cors({
-    credentials: true,
-    origin: ["http://localhost:3000"]
+    origin: ["http://localhost:3000", "https://b5-a5-parcel-delivery-system.vercel.app"],
+    credentials: true
 }))
 
 

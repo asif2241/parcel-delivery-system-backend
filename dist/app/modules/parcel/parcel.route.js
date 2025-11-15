@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ParcelRoutes = void 0;
+const express_1 = require("express");
+const parcel_controller_1 = require("./parcel.controller");
+const checkAuth_1 = require("../../middlewares/checkAuth");
+const user_interface_1 = require("../user/user.interface");
+const multer_config_1 = require("../../config/multer.config");
+const validateRequest_1 = require("../../middlewares/validateRequest");
+const parcel_validation_1 = require("./parcel.validation");
+exports.ParcelRoutes = (0, express_1.Router)();
+exports.ParcelRoutes.post("/create-parcel", (0, checkAuth_1.checkAuth)(user_interface_1.Role.SENDER, user_interface_1.Role.ADMIN, user_interface_1.Role.SUPER_ADMIN), multer_config_1.multerUpload.single("file"), (0, validateRequest_1.validateRequest)(parcel_validation_1.createParcelZodSchema), parcel_controller_1.ParcelControllers.createParcel);
+exports.ParcelRoutes.get("/all-parcel", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), parcel_controller_1.ParcelControllers.getAllParcel);
+exports.ParcelRoutes.get("/:id", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), parcel_controller_1.ParcelControllers.getSingleParcelById);
+exports.ParcelRoutes.patch("/cancel/:id", (0, checkAuth_1.checkAuth)(user_interface_1.Role.SENDER), parcel_controller_1.ParcelControllers.cancelParcel);
+exports.ParcelRoutes.get("/track/:trackingId", parcel_controller_1.ParcelControllers.trackParcel);
+exports.ParcelRoutes.patch("/update-status/:parcelId", (0, checkAuth_1.checkAuth)(user_interface_1.Role.ADMIN, user_interface_1.Role.SUPER_ADMIN), parcel_controller_1.ParcelControllers.updateParcelStatus);
+exports.ParcelRoutes.get("/dashboard/analytics", (0, checkAuth_1.checkAuth)(user_interface_1.Role.ADMIN, user_interface_1.Role.SUPER_ADMIN, user_interface_1.Role.SENDER), parcel_controller_1.ParcelControllers.parcelAnalytics);

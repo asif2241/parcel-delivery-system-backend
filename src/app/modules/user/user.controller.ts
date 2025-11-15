@@ -72,7 +72,7 @@ const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction)
 
 const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
-    console.log(id);
+    // console.log(id);
     const decodedToken = req.user;
 
     const result = await UserServices.blockUser(id, decodedToken as JwtPayload);

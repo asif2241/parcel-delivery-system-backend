@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import app from "./app"
 import { Server } from "http"
 import { envVars } from "./app/config/env";
@@ -68,4 +69,5 @@ process.on("uncaughtException", (err) => {
     }
     process.exit(1)
 })
+
 
