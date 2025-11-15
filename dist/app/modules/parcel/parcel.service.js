@@ -22,7 +22,8 @@ const parcel_constant_1 = require("./parcel.constant");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const createParcel = (payload, decodedToken) => __awaiter(void 0, void 0, void 0, function* () {
     // throw new AppError(222, "fake error")
-    const newParcelData = Object.assign(Object.assign({}, payload), { trackingId: (0, generateTrackingId_1.generateTrackingId)(), fee: (0, calculateFee_1.calculateParcelFee)(payload.weight), senderId: decodedToken.userId, sender_email: decodedToken.email, currentStatus: parcel_interface_1.PARCEL_STATUS.REQUESTED, statusHistory: [{
+    const trackingId = yield (0, generateTrackingId_1.generateTrackingId)();
+    const newParcelData = Object.assign(Object.assign({}, payload), { trackingId, fee: (0, calculateFee_1.calculateParcelFee)(payload.weight), senderId: decodedToken.userId, sender_email: decodedToken.email, currentStatus: parcel_interface_1.PARCEL_STATUS.REQUESTED, statusHistory: [{
                 status: parcel_interface_1.PARCEL_STATUS.REQUESTED,
                 updatedBy: decodedToken.userId,
                 notes: "Parcel created"
